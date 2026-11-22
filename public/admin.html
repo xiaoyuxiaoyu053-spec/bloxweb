@@ -1,0 +1,13 @@
+<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Admin</title>
+<style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;font:15px -apple-system,system-ui,sans-serif;color:#fff;background:radial-gradient(at 20% 10%,#8b5cf6,transparent 50%),radial-gradient(at 80% 80%,#d946ef,transparent 45%),#1b0f3a}
+.g{width:min(92vw,420px);padding:28px;border-radius:28px;background:linear-gradient(135deg,#fff3,#fff1);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid #ffffff48;box-shadow:inset 0 1px 0 #ffffff80,0 20px 50px #1e00504d}
+input,button{width:100%;padding:12px 14px;margin:6px 0;border-radius:16px;border:1px solid #ffffff40;background:#ffffff1f;color:#fff;font:inherit}button{background:linear-gradient(#a855f7,#7c3aed);font-weight:600;cursor:pointer}h2{margin:0 0 8px}[hidden]{display:none}small{opacity:.8}</style>
+<div class=g><div id=l><h2>Admin login</h2><input id=pw type=password placeholder=Password><button onclick=login()>Sign in</button></div>
+<div id=p hidden><h2>Backend</h2><p id=st></p><h3>Change admin password</h3><input id=np type=password placeholder="New password (8+)"><button onclick=chg()>Update password</button>
+<h3>Replace game</h3><small>Upload .rbxlx (Roblox XML). Parts, sizes, colours and SpawnLocation are imported.</small><input id=f type=file accept=".rbxlx,.rbxl"><button onclick=up()>Upload &amp; replace</button></div><p id=m></p></div>
+<script>let T='';const $=s=>document.querySelector(s);
+async function a(u,b,raw){const r=await fetch(u,{method:b!==undefined?'POST':'GET',headers:{'x-admin':T,...(raw?{}:{'Content-Type':'application/json'})},body:b===undefined?undefined:raw?b:JSON.stringify(b)});const j=await r.json().catch(()=>({}));if(!r.ok)throw Error(j.e||'Error');return j}
+async function login(){try{T=(await a('/api/admin/login',{password:$('#pw').value})).token;$('#l').hidden=true;$('#p').hidden=false;stats()}catch(e){$('#m').textContent=e.message}}
+async function stats(){const s=await a('/api/admin/stats');$('#st').textContent=`${s.users} accounts · ${s.online} online · ${s.parts} parts in game`}
+async function chg(){try{await a('/api/admin/password',{password:$('#np').value});$('#m').textContent='Password updated'}catch(e){$('#m').textContent=e.message}}
+async function up(){const f=$('#f').files[0];if(!f)return;try{const r=await a('/api/admin/upload',await f.arrayBuffer(),1);$('#m').textContent='Game replaced: '+r.parts+' parts';stats()}catch(e){$('#m').textContent=e.message}}</script>

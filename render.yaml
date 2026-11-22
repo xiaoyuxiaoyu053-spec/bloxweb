@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: bloxweb
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: ADMIN_PASSWORD   # initial admin password (change it in /admin afterwards)
+        sync: false
+      # Persistence: add a Render Disk (paid) mounted at /var/data and set:
+      # - key: DATA_FILE
+      #   value: /var/data/data.json
